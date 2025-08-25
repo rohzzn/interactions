@@ -73,7 +73,7 @@ export default function Home() {
               rel="noopener noreferrer"
               className="text-[#10AE4C] hover:underline transition-colors"
             >
-              Rohan
+              Rohan Pothuru
             </a>
             {" • "}
             <a
