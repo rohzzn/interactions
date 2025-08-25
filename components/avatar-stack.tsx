@@ -42,13 +42,13 @@ export function AvatarStack() {
                 className="relative cursor-pointer"
                 style={{
                   zIndex: isHovered ? 50 : avatars.length - index,
-                  marginLeft: index > 0 ? "-20px" : "0",
+                  marginLeft: index > 0 ? "-30px" : "0",
                 }}
                 onHoverStart={() => setHoveredId(avatar.id)}
                 onHoverEnd={() => setHoveredId(null)}
                 animate={{
-                  x: shouldExpand ? (index - 1.5) * 30 : 0,
-                  y: isHovered ? -20 : 0,
+                  x: shouldExpand ? (index - 1.5) * 45 : 0,
+                  y: isHovered ? -25 : 0,
                   scale: isHovered ? 1.2 : shouldExpand ? 0.9 : 1,
                 }}
                 transition={{
@@ -59,7 +59,7 @@ export function AvatarStack() {
               >
                 {/* Shadow */}
                 <motion.div
-                  className="absolute top-20 left-1/2 transform -translate-x-1/2 w-12 h-3 bg-[#181818]/20 rounded-full blur-sm"
+                  className="absolute top-28 left-1/2 transform -translate-x-1/2 w-16 h-4 bg-[#181818]/20 rounded-full blur-sm"
                   animate={{
                     scale: isHovered ? 1.4 : 1,
                     opacity: isHovered ? 0.6 : 0.3,
@@ -68,7 +68,7 @@ export function AvatarStack() {
 
                 {/* Avatar */}
                 <motion.div
-                  className="relative w-16 h-16 rounded-full overflow-hidden border-3 border-white shadow-lg"
+                  className="relative w-20 h-20 rounded-full overflow-hidden border-3 border-white shadow-lg"
                   animate={{
                     borderColor: isHovered ? "#10AE4C" : "white",
                     boxShadow: isHovered
@@ -99,7 +99,7 @@ export function AvatarStack() {
 
                 {/* Name label */}
                 <motion.div
-                  className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 pointer-events-none"
+                  className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 pointer-events-none"
                   animate={{
                     opacity: isHovered ? 1 : 0,
                     y: isHovered ? 0 : 10,
