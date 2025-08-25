@@ -11,9 +11,6 @@ export default function Home() {
     switch (currentDay) {
       case 1:
         return {
-          title: "Animated Avatar Stack",
-          description:
-            "An experimental approach to avatar stacking with morphing geometries, dynamic color transitions, and physics-based interactions.",
           component: <AvatarStack />,
         }
       default:
@@ -47,19 +44,21 @@ export default function Home() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center py-16">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <div className="inline-block border border-[#181818] px-4 py-2 mb-6">
-              <span className="text-sm font-light text-[#181818] tracking-wider">
-                DAY {currentDay.toString().padStart(2, "0")}
-              </span>
+          {currentDay !== 1 && (
+            <div className="text-center mb-12">
+              <div className="inline-block border border-[#181818] px-4 py-2 mb-6">
+                <span className="text-sm font-light text-[#181818] tracking-wider">
+                  DAY {currentDay.toString().padStart(2, "0")}
+                </span>
+              </div>
+              <h2 className="text-4xl md:text-6xl font-light text-[#181818] mb-4">{dayContent.title}</h2>
+              <p className="text-lg text-[#181818]/70 max-w-2xl mx-auto font-light leading-relaxed">
+                {dayContent.description}
+              </p>
             </div>
-            <h2 className="text-4xl md:text-6xl font-light text-[#181818] mb-4">{dayContent.title}</h2>
-            <p className="text-lg text-[#181818]/70 max-w-2xl mx-auto font-light leading-relaxed">
-              {dayContent.description}
-            </p>
-          </div>
+          )}
 
-          {dayContent.component}
+          <div className="flex justify-center">{dayContent.component}</div>
         </div>
       </main>
 
