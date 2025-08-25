@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { motion } from "framer-motion"
 
 const avatars = [
@@ -12,50 +12,6 @@ const avatars = [
 
 export function AvatarStack() {
   const [hoveredId, setHoveredId] = useState<number | null>(null)
-  const [positions, setPositions] = useState<{ x: number; y: number }[]>([])
-
-  useEffect(() => {
-    const initialPositions = avatars.map((_, index) => ({
-      x: index * 80 - (avatars.length * 80) / 2 + 40,
-      y: 0,
-    }))
-    setPositions(initialPositions)
-  }, [])
-
-  const calculateSurfaceTension = (currentIndex: number) => {
-    if (positions.length === 0) return { x: 0, y: 0 }
-
-    let forceX = 0
-    let forceY = 0
-
-    positions.forEach((pos, index) => {
-      if (index === currentIndex) return
-
-      const dx = positions[currentIndex].x - pos.x
-      const dy = positions[currentIndex].y - pos.y
-      const distance = Math.sqrt(dx * dx + dy * dy)
-
-      if (distance > 0) {
-        // Surface tension: attract at medium distance, repel when too close
-        let force = 0
-        if (distance < 60) {
-          // Repel when too close
-          force = (60 - distance) * 0.3
-        } else if (distance < 120) {
-          // Attract at medium distance
-          force = -(distance - 60) * 0.1
-        }
-
-        const normalizedX = dx / distance
-        const normalizedY = dy / distance
-
-        forceX += normalizedX * force
-        forceY += normalizedY * force
-      }
-    })
-
-    return { x: forceX, y: forceY }
-  }
 
   return (
     <div className="flex flex-col items-center space-y-16">
@@ -65,7 +21,7 @@ export function AvatarStack() {
           animate={{ scale: [1, 1.5, 1] }}
           transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
         />
-        <span className="text-xs font-light text-[#181818]/60 tracking-widest uppercase">Surface Tension</span>
+        <span className="text-xs font-light text-[#181818]/60 tracking-widest uppercase">Stacked Avatars</span>
         <motion.div
           className="w-1 h-1 bg-[#10AE4C] rounded-full"
           animate={{ scale: [1, 1.5, 1] }}
@@ -74,102 +30,84 @@ export function AvatarStack() {
       </div>
 
       <div className="relative">
-        <div className="flex items-center justify-center space-x-4">
+        <div className="relative flex items-center">
           {avatars.map((avatar, index) => {
-            const tension = calculateSurfaceTension(index)
+            const isHovered = hoveredId === avatar.id
+            const isAnyHovered = hoveredId !== null
+            const shouldExpand = isAnyHovered && !isHovered
 
             return (
               <motion.div
                 key={avatar.id}
                 className="relative cursor-pointer"
+                style={{
+                  zIndex: isHovered ? 50 : avatars.length - index,
+                  marginLeft: index > 0 ? "-20px" : "0",
+                }}
                 onHoverStart={() => setHoveredId(avatar.id)}
                 onHoverEnd={() => setHoveredId(null)}
                 animate={{
-                  x: tension.x,
-                  y: tension.y + Math.sin(Date.now() * 0.001 + index) * 3,
+                  x: shouldExpand ? (index - 1.5) * 30 : 0,
+                  y: isHovered ? -20 : 0,
+                  scale: isHovered ? 1.2 : shouldExpand ? 0.9 : 1,
                 }}
                 transition={{
                   type: "spring",
-                  stiffness: 50,
-                  damping: 20,
-                  mass: 1,
-                }}
-                whileHover={{
-                  scale: 1.05,
-                  y: tension.y - 10,
-                  transition: { duration: 0.3, ease: "easeOut" },
+                  stiffness: 300,
+                  damping: 30,
                 }}
               >
-                {hoveredId === avatar.id && (
-                  <motion.div
-                    className="absolute inset-0 pointer-events-none"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.3 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    {avatars.map((_, otherIndex) => {
-                      if (otherIndex === index) return null
-                      const angle = (otherIndex - index) * 30
-                      return (
-                        <motion.div
-                          key={otherIndex}
-                          className="absolute top-1/2 left-1/2 w-16 h-px bg-gradient-to-r from-[#10AE4C]/20 to-transparent origin-left"
-                          style={{
-                            transform: `translate(-50%, -50%) rotate(${angle}deg)`,
-                          }}
-                          animate={{
-                            scaleX: [0, 1, 0],
-                          }}
-                          transition={{
-                            duration: 1.5,
-                            repeat: Number.POSITIVE_INFINITY,
-                            delay: otherIndex * 0.2,
-                          }}
-                        />
-                      )
-                    })}
-                  </motion.div>
-                )}
-
+                {/* Shadow */}
                 <motion.div
-                  className="absolute top-20 left-1/2 transform -translate-x-1/2 w-10 h-2 bg-[#181818]/10 rounded-full blur-sm"
+                  className="absolute top-20 left-1/2 transform -translate-x-1/2 w-12 h-3 bg-[#181818]/20 rounded-full blur-sm"
                   animate={{
-                    scale: hoveredId === avatar.id ? 1.2 : 1,
-                    opacity: hoveredId === avatar.id ? 0.4 : 0.2,
+                    scale: isHovered ? 1.4 : 1,
+                    opacity: isHovered ? 0.6 : 0.3,
                   }}
                 />
 
+                {/* Avatar */}
                 <motion.div
-                  className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-lg"
+                  className="relative w-16 h-16 rounded-full overflow-hidden border-3 border-white shadow-lg"
                   animate={{
-                    borderColor: hoveredId === avatar.id ? "#10AE4C" : "white",
-                    boxShadow:
-                      hoveredId === avatar.id
-                        ? "0 15px 30px rgba(16, 174, 76, 0.2)"
-                        : "0 5px 15px rgba(24, 24, 24, 0.1)",
+                    borderColor: isHovered ? "#10AE4C" : "white",
+                    boxShadow: isHovered
+                      ? "0 20px 40px rgba(16, 174, 76, 0.3), 0 0 0 4px rgba(16, 174, 76, 0.1)"
+                      : "0 8px 25px rgba(24, 24, 24, 0.15)",
                   }}
-                  transition={{ duration: 0.3 }}
                 >
                   <motion.img
                     src={avatar.image}
                     alt={avatar.name}
                     className="w-full h-full object-cover"
                     animate={{
-                      scale: hoveredId === avatar.id ? 1.03 : 1,
+                      scale: isHovered ? 1.05 : 1,
+                      filter: shouldExpand ? "brightness(0.7)" : "brightness(1)",
                     }}
-                    transition={{ duration: 0.3 }}
                   />
+
+                  {/* Hover overlay */}
+                  {isHovered && (
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-t from-[#10AE4C]/20 to-transparent"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    />
+                  )}
                 </motion.div>
 
+                {/* Name label */}
                 <motion.div
-                  className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 pointer-events-none"
+                  className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 pointer-events-none"
                   animate={{
-                    opacity: hoveredId === avatar.id ? 1 : 0,
-                    y: hoveredId === avatar.id ? 0 : 10,
+                    opacity: isHovered ? 1 : 0,
+                    y: isHovered ? 0 : 10,
+                    scale: isHovered ? 1 : 0.8,
                   }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className="bg-[#181818] text-white px-2 py-1 rounded text-xs font-light whitespace-nowrap">
+                  <div className="bg-[#181818] text-white px-3 py-1.5 rounded-md text-sm font-light whitespace-nowrap shadow-lg">
                     {avatar.name}
                   </div>
                 </motion.div>
@@ -180,11 +118,11 @@ export function AvatarStack() {
       </div>
 
       <motion.p
-        className="text-xs text-[#181818]/40 font-light tracking-wide"
+        className="text-xs text-[#181818]/40 font-light tracking-wide text-center"
         animate={{ opacity: [0.4, 0.8, 0.4] }}
         transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
       >
-        Hover to see molecular bonds
+        Hover to expand the stack
       </motion.p>
     </div>
   )
