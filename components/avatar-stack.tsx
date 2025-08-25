@@ -1,230 +1,190 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 
 const avatars = [
-  { id: 1, name: "Alex", color: "#FF6B6B", image: "/avatar.png" },
-  { id: 2, name: "Sam", color: "#4ECDC4", image: "/people/person4.png" },
-  { id: 3, name: "Jordan", color: "#45B7D1", image: "/professional-headshot-glasses.png" },
-  { id: 4, name: "Casey", color: "#96CEB4", image: "/smiling-professional-headshot.png" },
-  { id: 5, name: "Riley", color: "#FFEAA7", image: "/professional-headshot-of-a-person-with-long-hair.png" },
-  { id: 6, name: "Morgan", color: "#DDA0DD", image: "/diverse-person-portrait.png" },
+  { id: 1, name: "Jay", image: "/Jay.jpeg" },
+  { id: 2, name: "Ankit", image: "/Ankit.jpeg" },
+  { id: 3, name: "Akash", image: "/Akash.jpeg" },
+  { id: 4, name: "Yogini", image: "/Yogini.jpeg" },
 ]
-
-type Shape = "circle" | "hexagon" | "diamond" | "triangle"
 
 export function AvatarStack() {
   const [hoveredId, setHoveredId] = useState<number | null>(null)
-  const [currentShape, setCurrentShape] = useState<Shape>("circle")
-  const [isAnimating, setIsAnimating] = useState(false)
+  const [positions, setPositions] = useState<{ x: number; y: number }[]>([])
 
-  // Auto-cycle through shapes
   useEffect(() => {
-    const shapes: Shape[] = ["circle", "hexagon", "diamond", "triangle"]
-    let currentIndex = 0
-
-    const interval = setInterval(() => {
-      setIsAnimating(true)
-      setTimeout(() => {
-        currentIndex = (currentIndex + 1) % shapes.length
-        setCurrentShape(shapes[currentIndex])
-        setIsAnimating(false)
-      }, 300)
-    }, 4000)
-
-    return () => clearInterval(interval)
+    const initialPositions = avatars.map((_, index) => ({
+      x: index * 80 - (avatars.length * 80) / 2 + 40,
+      y: 0,
+    }))
+    setPositions(initialPositions)
   }, [])
 
-  const getShapePath = (shape: Shape) => {
-    switch (shape) {
-      case "circle":
-        return "M40,10 A30,30 0 1,1 40,70 A30,30 0 1,1 40,10"
-      case "hexagon":
-        return "M40,10 L60,25 L60,55 L40,70 L20,55 L20,25 Z"
-      case "diamond":
-        return "M40,10 L65,40 L40,70 L15,40 Z"
-      case "triangle":
-        return "M40,10 L70,60 L10,60 Z"
-      default:
-        return "M40,10 A30,30 0 1,1 40,70 A30,30 0 1,1 40,10"
-    }
-  }
+  const calculateSurfaceTension = (currentIndex: number) => {
+    if (positions.length === 0) return { x: 0, y: 0 }
 
-  const containerVariants = {
-    hidden: { opacity: 0, y: 50 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        staggerChildren: 0.1,
-      },
-    },
-  }
+    let forceX = 0
+    let forceY = 0
 
-  const avatarVariants = {
-    hidden: {
-      opacity: 0,
-      scale: 0.5,
-      rotateY: -90,
-    },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      rotateY: 0,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 15,
-      },
-    },
+    positions.forEach((pos, index) => {
+      if (index === currentIndex) return
+
+      const dx = positions[currentIndex].x - pos.x
+      const dy = positions[currentIndex].y - pos.y
+      const distance = Math.sqrt(dx * dx + dy * dy)
+
+      if (distance > 0) {
+        // Surface tension: attract at medium distance, repel when too close
+        let force = 0
+        if (distance < 60) {
+          // Repel when too close
+          force = (60 - distance) * 0.3
+        } else if (distance < 120) {
+          // Attract at medium distance
+          force = -(distance - 60) * 0.1
+        }
+
+        const normalizedX = dx / distance
+        const normalizedY = dy / distance
+
+        forceX += normalizedX * force
+        forceY += normalizedY * force
+      }
+    })
+
+    return { x: forceX, y: forceY }
   }
 
   return (
-    <div className="flex flex-col items-center space-y-12">
-      {/* Shape Indicator */}
-      <div className="flex items-center space-x-4">
-        <div className="w-2 h-2 bg-[#10AE4C] rounded-full animate-pulse" />
-        <span className="text-sm font-light text-[#181818] tracking-wider uppercase">{currentShape} Mode</span>
-        <div className="w-2 h-2 bg-[#10AE4C] rounded-full animate-pulse" />
+    <div className="flex flex-col items-center space-y-16">
+      <div className="flex items-center space-x-2">
+        <motion.div
+          className="w-1 h-1 bg-[#10AE4C] rounded-full"
+          animate={{ scale: [1, 1.5, 1] }}
+          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+        />
+        <span className="text-xs font-light text-[#181818]/60 tracking-widest uppercase">Surface Tension</span>
+        <motion.div
+          className="w-1 h-1 bg-[#10AE4C] rounded-full"
+          animate={{ scale: [1, 1.5, 1] }}
+          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, delay: 1 }}
+        />
       </div>
 
-      {/* Avatar Stack */}
-      <motion.div className="relative" variants={containerVariants} initial="hidden" animate="visible">
-        <div className="flex items-center justify-center space-x-[-20px]">
-          {avatars.map((avatar, index) => (
-            <motion.div
-              key={avatar.id}
-              className="relative group cursor-pointer"
-              variants={avatarVariants}
-              whileHover={{
-                scale: 1.2,
-                zIndex: 10,
-                rotateY: 15,
-                transition: { type: "spring", stiffness: 300, damping: 20 },
-              }}
-              onHoverStart={() => setHoveredId(avatar.id)}
-              onHoverEnd={() => setHoveredId(null)}
-              style={{ zIndex: avatars.length - index }}
-            >
-              {/* Glow Effect */}
-              <motion.div
-                className="absolute inset-0 rounded-full blur-xl opacity-0 group-hover:opacity-30"
-                style={{ backgroundColor: avatar.color }}
-                animate={{
-                  scale: hoveredId === avatar.id ? 1.5 : 1,
-                }}
-                transition={{ duration: 0.3 }}
-              />
+      <div className="relative">
+        <div className="flex items-center justify-center space-x-4">
+          {avatars.map((avatar, index) => {
+            const tension = calculateSurfaceTension(index)
 
-              {/* Avatar Container */}
+            return (
               <motion.div
-                className="relative w-20 h-20 overflow-hidden"
+                key={avatar.id}
+                className="relative cursor-pointer"
+                onHoverStart={() => setHoveredId(avatar.id)}
+                onHoverEnd={() => setHoveredId(null)}
                 animate={{
-                  rotate: isAnimating ? 360 : 0,
+                  x: tension.x,
+                  y: tension.y + Math.sin(Date.now() * 0.001 + index) * 3,
                 }}
-                transition={{ duration: 0.6, ease: "easeInOut" }}
+                transition={{
+                  type: "spring",
+                  stiffness: 50,
+                  damping: 20,
+                  mass: 1,
+                }}
+                whileHover={{
+                  scale: 1.05,
+                  y: tension.y - 10,
+                  transition: { duration: 0.3, ease: "easeOut" },
+                }}
               >
-                {/* Dynamic Shape Mask */}
-                <svg className="absolute inset-0 w-full h-full">
-                  <defs>
-                    <clipPath id={`clip-${avatar.id}`}>
-                      <motion.path
-                        d={getShapePath(currentShape)}
-                        animate={{
-                          d: getShapePath(currentShape),
-                        }}
-                        transition={{ duration: 0.6, ease: "easeInOut" }}
-                      />
-                    </clipPath>
-                  </defs>
-                </svg>
-
-                {/* Avatar Image */}
-                <motion.img
-                  src={avatar.image}
-                  alt={avatar.name}
-                  className="w-full h-full object-cover"
-                  style={{ clipPath: `url(#clip-${avatar.id})` }}
-                  animate={{
-                    filter: hoveredId === avatar.id ? "brightness(1.1) saturate(1.2)" : "brightness(1) saturate(1)",
-                  }}
-                />
-
-                {/* Color Overlay */}
-                <motion.div
-                  className="absolute inset-0 mix-blend-overlay opacity-0 group-hover:opacity-20"
-                  style={{
-                    backgroundColor: avatar.color,
-                    clipPath: `url(#clip-${avatar.id})`,
-                  }}
-                  animate={{
-                    opacity: hoveredId === avatar.id ? 0.2 : 0,
-                  }}
-                />
-
-                {/* Border */}
-                <motion.div
-                  className="absolute inset-0 border-2 border-[#10AE4C] opacity-0 group-hover:opacity-100"
-                  style={{ clipPath: `url(#clip-${avatar.id})` }}
-                  animate={{
-                    borderColor: hoveredId === avatar.id ? "#10AE4C" : "transparent",
-                  }}
-                />
-              </motion.div>
-
-              {/* Name Label */}
-              <AnimatePresence>
                 {hoveredId === avatar.id && (
                   <motion.div
-                    className="absolute -bottom-8 left-1/2 transform -translate-x-1/2"
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
+                    className="absolute inset-0 pointer-events-none"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.3 }}
+                    exit={{ opacity: 0 }}
                   >
-                    <div className="bg-[#181818] text-white px-3 py-1 rounded text-sm font-light whitespace-nowrap">
-                      {avatar.name}
-                    </div>
+                    {avatars.map((_, otherIndex) => {
+                      if (otherIndex === index) return null
+                      const angle = (otherIndex - index) * 30
+                      return (
+                        <motion.div
+                          key={otherIndex}
+                          className="absolute top-1/2 left-1/2 w-16 h-px bg-gradient-to-r from-[#10AE4C]/20 to-transparent origin-left"
+                          style={{
+                            transform: `translate(-50%, -50%) rotate(${angle}deg)`,
+                          }}
+                          animate={{
+                            scaleX: [0, 1, 0],
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Number.POSITIVE_INFINITY,
+                            delay: otherIndex * 0.2,
+                          }}
+                        />
+                      )
+                    })}
                   </motion.div>
                 )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
-        </div>
 
-        {/* Floating Particles */}
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 bg-[#10AE4C] rounded-full"
-              style={{
-                left: `${20 + i * 12}%`,
-                top: `${30 + (i % 2) * 40}%`,
-              }}
-              animate={{
-                y: [-10, 10, -10],
-                opacity: [0.3, 0.8, 0.3],
-              }}
-              transition={{
-                duration: 2 + i * 0.5,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: "easeInOut",
-              }}
-            />
-          ))}
-        </div>
-      </motion.div>
+                <motion.div
+                  className="absolute top-20 left-1/2 transform -translate-x-1/2 w-10 h-2 bg-[#181818]/10 rounded-full blur-sm"
+                  animate={{
+                    scale: hoveredId === avatar.id ? 1.2 : 1,
+                    opacity: hoveredId === avatar.id ? 0.4 : 0.2,
+                  }}
+                />
 
-      {/* Interaction Hint */}
+                <motion.div
+                  className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-white shadow-lg"
+                  animate={{
+                    borderColor: hoveredId === avatar.id ? "#10AE4C" : "white",
+                    boxShadow:
+                      hoveredId === avatar.id
+                        ? "0 15px 30px rgba(16, 174, 76, 0.2)"
+                        : "0 5px 15px rgba(24, 24, 24, 0.1)",
+                  }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <motion.img
+                    src={avatar.image}
+                    alt={avatar.name}
+                    className="w-full h-full object-cover"
+                    animate={{
+                      scale: hoveredId === avatar.id ? 1.03 : 1,
+                    }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
+
+                <motion.div
+                  className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 pointer-events-none"
+                  animate={{
+                    opacity: hoveredId === avatar.id ? 1 : 0,
+                    y: hoveredId === avatar.id ? 0 : 10,
+                  }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="bg-[#181818] text-white px-2 py-1 rounded text-xs font-light whitespace-nowrap">
+                    {avatar.name}
+                  </div>
+                </motion.div>
+              </motion.div>
+            )
+          })}
+        </div>
+      </div>
+
       <motion.p
-        className="text-sm text-[#181818]/60 font-light"
-        animate={{ opacity: [0.6, 1, 0.6] }}
-        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+        className="text-xs text-[#181818]/40 font-light tracking-wide"
+        animate={{ opacity: [0.4, 0.8, 0.4] }}
+        transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY }}
       >
-        Hover to reveal names • Shapes auto-cycle every 4 seconds
+        Hover to see molecular bonds
       </motion.p>
     </div>
   )

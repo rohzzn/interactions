@@ -69,12 +69,21 @@ export default function Home() {
           <p className="text-sm font-light text-[#181818]">
             Made by{" "}
             <a
-              href="https://peerlist.io/rohan"
+              href="https://peerlist.io/rohzzn"
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#10AE4C] hover:underline transition-colors"
             >
               Rohan
+            </a>
+            {" • "}
+            <a
+              href="https://peerlist.io/challenges/interaction-design-challenge-aug25"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#10AE4C] hover:underline transition-colors"
+            >
+              Challenge by Peerlist
             </a>
           </p>
         </div>
