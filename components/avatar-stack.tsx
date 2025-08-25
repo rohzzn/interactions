@@ -57,15 +57,6 @@ export function AvatarStack() {
                   damping: 30,
                 }}
               >
-                {/* Shadow */}
-                <motion.div
-                  className="absolute top-28 left-1/2 transform -translate-x-1/2 w-16 h-4 bg-[#181818]/20 rounded-full blur-sm"
-                  animate={{
-                    scale: isHovered ? 1.4 : 1,
-                    opacity: isHovered ? 0.6 : 0.3,
-                  }}
-                />
-
                 {/* Avatar */}
                 <motion.div
                   className="relative w-20 h-20 rounded-full overflow-hidden border-3 border-white shadow-lg"
