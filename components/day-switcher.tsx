@@ -1,11 +1,15 @@
 "use client"
 
+import { useRef } from "react"
+
 interface DaySwitcherProps {
   currentDay: number
   onDayChange: (day: number) => void
 }
 
 export function DaySwitcher({ currentDay, onDayChange }: DaySwitcherProps) {
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
   const days = [
     { number: 1, unlocked: true },
     { number: 2, unlocked: true },
@@ -16,13 +20,31 @@ export function DaySwitcher({ currentDay, onDayChange }: DaySwitcherProps) {
     { number: 7, unlocked: false },
   ]
 
+  const playDaySwitchSound = () => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio("https://hebbkx1anhila5yf.public.blob.vercel-storage.com/public_public_sounds_trigger-Orym0TVjue0oT0bju89LM45iBboiVq.mp3")
+      audioRef.current.volume = 0.3
+    }
+    audioRef.current.currentTime = 0
+    audioRef.current.play().catch(() => {
+      // Silently handle autoplay restrictions
+    })
+  }
+
+  const handleDayChange = (day: number) => {
+    if (day !== currentDay) {
+      playDaySwitchSound()
+    }
+    onDayChange(day)
+  }
+
   return (
     <div className="w-full">
       <div className="flex justify-center gap-2 md:gap-4 flex-wrap">
         {days.map((day) => (
           <button
             key={day.number}
-            onClick={() => day.unlocked && onDayChange(day.number)}
+            onClick={() => day.unlocked && handleDayChange(day.number)}
             disabled={!day.unlocked}
             className={`
               relative border border-[#181818] px-6 py-4 min-w-[80px] transition-all duration-300
