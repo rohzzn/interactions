@@ -18,8 +18,7 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
   )
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
 
-  // Mock validation - in real app this would be an API call
-  const correctOTP = "123456"
+  const correctOTP = "069420"
 
   const handleChange = (index: number, value: string) => {
     if (value.length > 1) return
@@ -90,8 +89,13 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
   const getPulseAnimation = (index: number) => {
     if (states[index] === "active" && activeIndex === index) {
       return {
-        scale: [1, 1.02, 1],
-        transition: { duration: 0.3 },
+        scale: [1, 1.08, 1],
+        transition: {
+          duration: 0.5,
+          type: "spring",
+          stiffness: 300,
+          damping: 15,
+        },
       }
     }
     return {}
@@ -122,46 +126,25 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
               onKeyDown={(e) => handleKeyDown(index, e)}
               onFocus={() => handleFocus(index)}
               className={`
-                w-12 h-14 text-center text-xl font-medium border-2 rounded-lg
-                transition-all duration-200 outline-none
+                w-12 h-14 text-center text-xl font-medium border-2 rounded-2xl
+                transition-all duration-300 outline-none transform
+                hover:scale-105 focus:scale-105
                 ${getInputStyle(index)}
               `}
             />
-
-            {/* Active state indicator */}
-            <AnimatePresence>
-              {activeIndex === index && states[index] === "default" && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute inset-x-0 bottom-0 h-0.5 bg-[#10AE4C] rounded-full"
-                />
-              )}
-            </AnimatePresence>
-
-            {/* Success checkmark */}
-            <AnimatePresence>
-              {states[index] === "correct" && (
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="absolute -top-1 -right-1 w-5 h-5 bg-[#10AE4C] rounded-full flex items-center justify-center"
-                >
-                  <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                </motion.div>
-              )}
-            </AnimatePresence>
 
             {/* Error shake animation */}
             <AnimatePresence>
               {states[index] === "incorrect" && (
                 <motion.div
                   initial={{ x: 0 }}
-                  animate={{ x: [-2, 2, -2, 2, 0] }}
-                  transition={{ duration: 0.4 }}
+                  animate={{ x: [-4, 4, -4, 4, -2, 2, 0] }}
+                  transition={{
+                    duration: 0.6,
+                    type: "spring",
+                    stiffness: 500,
+                    damping: 8,
+                  }}
                   className="absolute inset-0 pointer-events-none"
                 />
               )}
@@ -177,6 +160,7 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className="text-[#10AE4C] text-sm font-medium"
           >
             ✓ Verification successful!
@@ -188,6 +172,7 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
             className="text-red-500 text-sm font-medium"
           >
             ✗ Invalid code. Please try again.
@@ -196,7 +181,7 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
       </AnimatePresence>
 
       <div className="text-xs text-[#181818]/50 text-center">
-        Try entering: <span className="font-mono bg-[#181818]/5 px-2 py-1 rounded">123456</span>
+        Try entering: <span className="font-mono bg-[#181818]/5 px-2 py-1 rounded-lg">069420</span>
       </div>
     </div>
   )
