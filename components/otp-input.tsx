@@ -20,6 +20,32 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
 
   const correctOTP = "069420"
 
+  const playSound = (
+    frequency: number,
+    duration: number,
+    type: "sine" | "square" | "triangle" = "sine",
+    volume = 0.1,
+  ) => {
+    try {
+      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+      const oscillator = audioContext.createOscillator()
+      const gainNode = audioContext.createGain()
+
+      oscillator.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+
+      oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime)
+      oscillator.type = type
+      gainNode.gain.setValueAtTime(volume, audioContext.currentTime)
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration)
+
+      oscillator.start(audioContext.currentTime)
+      oscillator.stop(audioContext.currentTime + duration)
+    } catch (error) {
+      // Silently fail if audio context is not supported
+    }
+  }
+
   const handleChange = (index: number, value: string) => {
     if (value.length > 1) return
 
@@ -28,6 +54,10 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
 
     newOtp[index] = value
     newStates[index] = value ? "active" : "default"
+
+    if (value) {
+      playSound(800, 0.1, "sine", 0.05)
+    }
 
     setOtp(newOtp)
     setStates(newStates)
@@ -44,9 +74,15 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
       setTimeout(() => {
         if (otpString === correctOTP) {
           setStates(new Array(length).fill("correct"))
+          playSound(523, 0.2, "sine", 0.08) // C
+          setTimeout(() => playSound(659, 0.2, "sine", 0.08), 100) // E
+          setTimeout(() => playSound(784, 0.3, "sine", 0.08), 200) // G
           onComplete?.(otpString)
         } else {
           setStates(new Array(length).fill("incorrect"))
+          playSound(400, 0.15, "square", 0.06)
+          setTimeout(() => playSound(300, 0.15, "square", 0.06), 150)
+          setTimeout(() => playSound(200, 0.2, "square", 0.06), 300)
           // Reset after showing error
           setTimeout(() => {
             setOtp(new Array(length).fill(""))
@@ -61,12 +97,14 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
+      playSound(600, 0.08, "triangle", 0.04)
       setActiveIndex(index - 1)
       inputRefs.current[index - 1]?.focus()
     }
   }
 
   const handleFocus = (index: number) => {
+    playSound(1000, 0.05, "sine", 0.03)
     setActiveIndex(index)
   }
 
