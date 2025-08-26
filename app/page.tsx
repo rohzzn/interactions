@@ -12,10 +12,12 @@ export default function Home() {
     switch (currentDay) {
       case 1:
         return {
+          title: "Animated Avatar Stack",
           component: <AvatarStack />,
         }
       case 2:
         return {
+          title: "Interactive OTP Input",
           component: <OTPInput onComplete={(otp) => console.log("OTP completed:", otp)} />,
         }
       default:
@@ -49,23 +51,11 @@ export default function Home() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center py-16">
         <div className="container mx-auto px-4">
-          {currentDay === 1 && (
+          {(currentDay === 1 || currentDay === 2) && (
             <div className="text-center mb-12">
-              <div className="flex items-center justify-center gap-4 mb-8">
-                <div className="w-2 h-2 bg-[#10AE4C] rounded-full"></div>
-                <h2 className="text-sm font-light text-[#181818] tracking-[0.2em] uppercase">Stacked Avatars</h2>
-                <div className="w-2 h-2 bg-[#10AE4C] rounded-full"></div>
-              </div>
-            </div>
-          )}
-
-          {currentDay === 2 && (
-            <div className="text-center mb-12">
-              <div className="flex items-center justify-center gap-4 mb-8">
-                <div className="w-2 h-2 bg-[#10AE4C] rounded-full"></div>
-                <h2 className="text-sm font-light text-[#181818] tracking-[0.2em] uppercase">Interactive OTP</h2>
-                <div className="w-2 h-2 bg-[#10AE4C] rounded-full"></div>
-              </div>
+              <h2 className="text-3xl md:text-4xl font-light text-[#181818] mb-8 tracking-wide">
+                {currentDay === 1 ? "Animated Avatar Stack" : "Interactive OTP Input"}
+              </h2>
             </div>
           )}
 
