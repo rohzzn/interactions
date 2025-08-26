@@ -53,7 +53,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           {(currentDay === 1 || currentDay === 2) && (
             <div className="flex flex-col items-center justify-center space-y-12">
-              <h2 className="text-3xl md:text-4xl font-light text-[#181818] tracking-wide">
+              <h2 className="text-3xl text-[#181818] tracking-wide font-light md:text-lg text-center text-zinc-400">
                 {currentDay === 1 ? "Animated Avatar Stack" : "Interactive OTP Input"}
               </h2>
               {dayContent.component}
