@@ -8,7 +8,7 @@ interface DaySwitcherProps {
 export function DaySwitcher({ currentDay, onDayChange }: DaySwitcherProps) {
   const days = [
     { number: 1, title: "Animated Avatar Stack", unlocked: true },
-    { number: 2, title: "Coming Soon", unlocked: false },
+    { number: 2, title: "Interactive OTP Input", unlocked: true },
     { number: 3, title: "Coming Soon", unlocked: false },
     { number: 4, title: "Coming Soon", unlocked: false },
     { number: 5, title: "Coming Soon", unlocked: false },

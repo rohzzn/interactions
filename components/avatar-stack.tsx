@@ -15,19 +15,7 @@ export function AvatarStack() {
 
   return (
     <div className="flex flex-col items-center space-y-16">
-      <div className="flex items-center space-x-2">
-        <motion.div
-          className="w-1 h-1 bg-[#10AE4C] rounded-full"
-          animate={{ scale: [1, 1.5, 1] }}
-          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-        />
-        <span className="text-xs font-light text-[#181818]/60 tracking-widest uppercase">Stacked Avatars</span>
-        <motion.div
-          className="w-1 h-1 bg-[#10AE4C] rounded-full"
-          animate={{ scale: [1, 1.5, 1] }}
-          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, delay: 1 }}
-        />
-      </div>
+      
 
       <div className="relative w-96 h-32 flex items-center justify-center">
         {avatars.map((avatar, index) => {
