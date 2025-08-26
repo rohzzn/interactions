@@ -52,11 +52,13 @@ export default function Home() {
       <main className="flex-1 flex items-center justify-center py-16">
         <div className="container mx-auto px-4">
           {(currentDay === 1 || currentDay === 2) && (
-            <div className="flex flex-col items-center justify-center space-y-8">
-              <h2 className="text-3xl md:text-4xl text-[#181818] tracking-wide font-light text-center">
-                {currentDay === 1 ? "Animated Avatar Stack" : "Interactive OTP Input"}
-              </h2>
-              <div className="flex items-center justify-center">{dayContent.component}</div>
+            <div className="flex flex-col items-center justify-center space-y-12">
+              <div className="relative w-full h-16 flex items-center justify-center">
+                <h2 className="absolute text-3xl md:text-4xl text-[#181818] tracking-wide font-light whitespace-nowrap">
+                  {dayContent.title}
+                </h2>
+              </div>
+              <div className="flex justify-center w-full">{dayContent.component}</div>
             </div>
           )}
 

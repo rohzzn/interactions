@@ -146,8 +146,8 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
   return (
     <div className="flex flex-col items-center space-y-8">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-light text-[#181818]">Enter Verification Code</h2>
-        <p className="text-sm text-[#181818]/70">We've sent a 6-digit code to your device</p>
+        
+        
       </div>
 
       <div className="flex gap-3">
