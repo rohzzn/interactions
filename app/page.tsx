@@ -49,14 +49,14 @@ export default function Home() {
       </section>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col items-center justify-center py-16">
+      <main className="flex-1 flex items-center justify-center py-16">
         <div className="container mx-auto px-4">
           {(currentDay === 1 || currentDay === 2) && (
-            <div className="flex flex-col items-center justify-center space-y-12">
-              <h2 className="text-3xl text-[#181818] tracking-wide font-light md:text-lg text-center text-zinc-400">
+            <div className="flex flex-col items-center justify-center space-y-8">
+              <h2 className="text-3xl md:text-4xl text-[#181818] tracking-wide font-light text-center">
                 {currentDay === 1 ? "Animated Avatar Stack" : "Interactive OTP Input"}
               </h2>
-              {dayContent.component}
+              <div className="flex items-center justify-center">{dayContent.component}</div>
             </div>
           )}
 
