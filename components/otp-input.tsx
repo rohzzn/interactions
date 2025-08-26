@@ -114,7 +114,7 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
 
     switch (state) {
       case "active":
-        return "border-[#10AE4C] bg-[#10AE4C]/5"
+        return "border-blue-500 bg-blue-500/5"
       case "correct":
         return "border-[#10AE4C] bg-[#10AE4C]/10 text-[#10AE4C]"
       case "incorrect":
@@ -145,10 +145,7 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
 
   return (
     <div className="flex flex-col items-center space-y-8">
-      <div className="text-center space-y-2">
-        
-        
-      </div>
+      <div className="text-center space-y-2"></div>
 
       <div className="flex gap-3">
         {otp.map((digit, index) => (
