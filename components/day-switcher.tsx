@@ -13,7 +13,7 @@ export function DaySwitcher({ currentDay, onDayChange }: DaySwitcherProps) {
   const days = [
     { number: 1, unlocked: true },
     { number: 2, unlocked: true },
-    { number: 3, unlocked: false },
+    { number: 3, unlocked: true }, // unlocked Day 3 for Card to Page transition
     { number: 4, unlocked: false },
     { number: 5, unlocked: false },
     { number: 6, unlocked: false },

@@ -4,6 +4,7 @@ import { useState } from "react"
 import { AvatarStack } from "@/components/avatar-stack"
 import { DaySwitcher } from "@/components/day-switcher"
 import { OTPInput } from "@/components/otp-input"
+import { CardToPageTransition } from "@/components/card-to-page-transition"
 
 export default function Home() {
   const [currentDay, setCurrentDay] = useState(1)
@@ -19,6 +20,11 @@ export default function Home() {
         return {
           title: "Interactive OTP Input",
           component: <OTPInput onComplete={(otp) => console.log("OTP completed:", otp)} />,
+        }
+      case 3:
+        return {
+          title: "Card to Page Transition",
+          component: <CardToPageTransition />,
         }
       default:
         return {
@@ -51,7 +57,7 @@ export default function Home() {
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center py-16">
         <div className="container mx-auto px-4">
-          {(currentDay === 1 || currentDay === 2) && (
+          {(currentDay === 1 || currentDay === 2 || currentDay === 3) && (
             <div className="flex flex-col items-center justify-center space-y-12">
               <div className="relative w-full h-16 flex items-center justify-center">
                 <h2 className="absolute text-3xl md:text-4xl text-[#181818] tracking-wide font-light whitespace-nowrap">
@@ -62,7 +68,7 @@ export default function Home() {
             </div>
           )}
 
-          {currentDay > 2 && (
+          {currentDay > 3 && (
             <div className="text-center mb-12">
               <div className="inline-block border border-[#181818] px-4 py-2 mb-6">
                 <span className="text-sm font-light text-[#181818] tracking-wider">
