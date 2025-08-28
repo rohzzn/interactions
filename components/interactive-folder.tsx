@@ -91,6 +91,7 @@ export function InteractiveFolder() {
             className="w-40 h-32 bg-gradient-to-br from-[#10AE4C] via-[#0ea844] to-[#0d8f3f] rounded-lg shadow-2xl relative overflow-hidden"
             style={{
               transformStyle: "preserve-3d",
+              borderRadius: "0.5rem", // Explicit border-radius to ensure it's not purged
             }}
             animate={{
               rotateX: isOpen ? -25 : isHovered ? -5 : 0,
@@ -102,6 +103,10 @@ export function InteractiveFolder() {
             {/* Folder Tab with better positioning */}
             <motion.div
               className="absolute -top-3 left-6 w-20 h-8 bg-gradient-to-br from-[#10AE4C] to-[#0d8f3f] rounded-t-xl shadow-lg"
+              style={{
+                borderTopLeftRadius: "0.75rem",
+                borderTopRightRadius: "0.75rem",
+              }}
               animate={{
                 rotateX: isOpen ? -15 : 0,
               }}
@@ -110,18 +115,20 @@ export function InteractiveFolder() {
 
             {/* Enhanced folder highlight and texture */}
             <motion.div
-              className="absolute inset-0 bg-gradient-to-br from-white/30 via-white/10 to-transparent rounded-lg"
+              className="absolute inset-0 bg-gradient-to-br from-white/30 via-white/10 to-transparent"
+              style={{ borderRadius: "0.5rem" }}
               animate={{
                 opacity: isHovered ? 1 : 0.6,
               }}
             />
 
             {/* Folder edge highlight */}
-            <div className="absolute inset-0 border border-white/20 rounded-lg" />
+            <div className="absolute inset-0 border border-white/20" style={{ borderRadius: "0.5rem" }} />
 
             {/* File Count Badge */}
             <motion.div
-              className="absolute bottom-3 right-3 bg-white/95 text-[#181818] text-sm px-3 py-1.5 rounded-full font-semibold shadow-lg"
+              className="absolute bottom-3 right-3 bg-white/95 text-[#181818] text-sm px-3 py-1.5 font-semibold shadow-lg"
+              style={{ borderRadius: "9999px" }} // Full rounded
               animate={{
                 scale: isOpen ? 0 : 1,
                 opacity: isOpen ? 0 : 1,
@@ -134,7 +141,8 @@ export function InteractiveFolder() {
 
           {/* Enhanced shadow */}
           <motion.div
-            className="absolute inset-0 bg-black/30 rounded-lg blur-lg -z-10"
+            className="absolute inset-0 bg-black/30 blur-lg -z-10"
+            style={{ borderRadius: "0.5rem" }}
             animate={{
               y: isOpen ? 12 : 6,
               scale: isOpen ? 1.2 : 1,
@@ -165,6 +173,7 @@ export function InteractiveFolder() {
             {/* Actual folder window */}
             <motion.div
               className="relative w-full max-w-2xl bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
+              style={{ borderRadius: "0.75rem" }} // Explicit xl border-radius
               initial={{ opacity: 0, scale: 0.8, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.8, y: 50 }}
@@ -195,7 +204,10 @@ export function InteractiveFolder() {
               {/* Window toolbar */}
               <div className="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center space-x-4">
                 <button className="text-xs text-gray-600 hover:text-gray-800 transition-colors">← Back</button>
-                <div className="flex-1 bg-white rounded-md px-3 py-1 text-xs text-gray-600 border border-gray-200">
+                <div
+                  className="flex-1 bg-white px-3 py-1 text-xs text-gray-600 border border-gray-200"
+                  style={{ borderRadius: "0.375rem" }} // Explicit md border-radius
+                >
                   /Design Project
                 </div>
                 <button className="text-xs text-gray-600 hover:text-gray-800 transition-colors">View</button>
@@ -207,11 +219,12 @@ export function InteractiveFolder() {
                   {files.map((file, index) => (
                     <motion.div
                       key={file.id}
-                      className={`flex flex-col items-center space-y-2 p-3 rounded-lg cursor-pointer transition-all ${
+                      className={`flex flex-col items-center space-y-2 p-3 cursor-pointer transition-all ${
                         selectedFile === file.id
                           ? "bg-blue-100 border-2 border-blue-300"
                           : "hover:bg-gray-50 border-2 border-transparent"
                       }`}
+                      style={{ borderRadius: "0.5rem" }} // Explicit border-radius for file items
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
