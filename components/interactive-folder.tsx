@@ -76,7 +76,7 @@ export function InteractiveFolder() {
   }
 
   return (
-    <div className="flex flex-col items-center space-y-8 relative min-h-[600px]">
+    <div className="flex flex-col items-center space-y-8 relative min-h-[200px]">
       <div className="relative z-10">
         <motion.div
           className="relative cursor-pointer"
