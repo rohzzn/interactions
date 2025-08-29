@@ -6,7 +6,6 @@ import { motion, AnimatePresence } from "framer-motion"
 interface Step {
   id: number
   title: string
-  subtitle: string
   type: "text" | "email" | "select" | "textarea"
   placeholder?: string
   options?: string[]
@@ -17,51 +16,40 @@ const steps: Step[] = [
   {
     id: 1,
     title: "What do humans call you?",
-    subtitle: "Don't worry, we won't judge your parents' naming skills",
     type: "text",
-    placeholder: "Your totally awesome name here",
+    placeholder: "Your totally unique name (or the one your parents gave you)",
     required: true,
   },
   {
     id: 2,
-    title: "Where do we spam you?",
-    subtitle: "Promise we'll only send you the good stuff (and cat memes)",
+    title: "Where do the internet letters find you?",
     type: "email",
-    placeholder: "your.email@somewhere.cool",
+    placeholder: "your.email@somewhere.com (we promise not to spam... much)",
     required: true,
   },
   {
     id: 3,
     title: "What's your superpower?",
-    subtitle: "AKA what you do when you're not procrastinating",
     type: "select",
-    options: [
-      "Design Wizard",
-      "Code Ninja",
-      "Product Whisperer",
-      "Startup Dreamer",
-      "Professional Student",
-      "I'm Still Figuring It Out",
-    ],
+    options: ["Design Wizard", "Code Ninja", "Product Guru", "Marketing Magician", "Data Detective", "Other Human"],
     required: true,
   },
   {
     id: 4,
     title: "Spill the tea about your project",
-    subtitle: "What amazing thing are you building? (Or planning to build... someday)",
     type: "textarea",
-    placeholder: "Your world-changing idea or that app you've been 'almost done' with...",
-    required: false,
+    required: true,
   },
 ]
 
 export function ProgressiveInputStack() {
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<Record<number, string>>({})
+  const [completedSteps, setCompletedSteps] = useState<number[]>([])
   const [isComplete, setIsComplete] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const playStepSound = (type: "next" | "complete") => {
+  const playStepSound = (type: "next" | "complete" | "previous") => {
     if (!audioRef.current) {
       audioRef.current = new Audio()
       audioRef.current.volume = 0.2
@@ -78,6 +66,9 @@ export function ProgressiveInputStack() {
     if (type === "next") {
       oscillator.frequency.setValueAtTime(800, audioContext.currentTime)
       oscillator.frequency.exponentialRampToValueAtTime(1000, audioContext.currentTime + 0.1)
+    } else if (type === "previous") {
+      oscillator.frequency.setValueAtTime(600, audioContext.currentTime)
+      oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1)
     } else {
       // Success chord
       oscillator.frequency.setValueAtTime(523, audioContext.currentTime) // C
@@ -106,6 +97,7 @@ export function ProgressiveInputStack() {
 
     if (currentStep < steps.length) {
       playStepSound("next")
+      setCompletedSteps((prev) => [...prev.filter((s) => s !== currentStep), currentStep])
       setCurrentStep(currentStep + 1)
     } else {
       playStepSound("complete")
@@ -115,6 +107,8 @@ export function ProgressiveInputStack() {
 
   const handlePrevious = () => {
     if (currentStep > 1) {
+      playStepSound("previous")
+      setCompletedSteps((prev) => prev.filter((s) => s !== currentStep - 1))
       setCurrentStep(currentStep - 1)
     }
   }
@@ -140,15 +134,16 @@ export function ProgressiveInputStack() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </motion.div>
-        <h3 className="text-2xl font-light text-[#181818] mb-4">You're officially awesome!</h3>
-        <p className="text-[#181818]/70 font-light">Thanks for not giving up halfway through. You're a legend!</p>
+        <h3 className="text-2xl font-light text-[#181818] mb-4">You're officially awesome! 🎉</h3>
+        <p className="text-gray-600 mb-6">Thanks for sharing your brilliance with us!</p>
         <button
           onClick={() => {
             setCurrentStep(1)
             setFormData({})
+            setCompletedSteps([])
             setIsComplete(false)
           }}
-          className="mt-6 px-6 py-2 border border-[#181818] text-[#181818] hover:bg-[#181818] hover:text-white transition-colors font-light"
+          className="mt-6 px-6 py-2 border border-[#181818] text-[#181818] hover:bg-[#181818] hover:text-white transition-colors font-light rounded-full"
         >
           Start Over
         </button>
@@ -158,129 +153,114 @@ export function ProgressiveInputStack() {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      {/* Progress Bar */}
-      <div className="mb-4">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-light text-[#181818]/70">
-            Step {currentStep} of {steps.length}
-          </span>
-          <span className="text-sm font-light text-[#181818]/70">
-            {Math.round((currentStep / steps.length) * 100)}%
-          </span>
-        </div>
-        <div className="w-full bg-[#181818]/10 h-1 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full bg-[#10AE4C]"
-            initial={{ width: 0 }}
-            animate={{ width: `${(currentStep / steps.length) * 100}%` }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-          />
-        </div>
-      </div>
-
       {/* Step Stack */}
       <div className="relative min-h-[180px]">
+        {completedSteps.map((stepId, index) => (
+          <motion.div
+            key={`completed-${stepId}`}
+            initial={{ opacity: 0 }}
+            animate={{
+              opacity: 1,
+              y: -(index + 1) * 8,
+              x: -(index + 1) * 8,
+              zIndex: 10 - index,
+            }}
+            className="absolute inset-0 bg-white border-2 border-gray-200 rounded-2xl shadow-sm"
+            style={{
+              width: "100%",
+              height: "180px",
+            }}
+          />
+        ))}
+
+        {/* Current Step Card */}
         <AnimatePresence mode="wait">
           <motion.div
             key={currentStep}
-            initial={{ opacity: 0, x: 50, rotateY: -15 }}
-            animate={{ opacity: 1, x: 0, rotateY: 0 }}
-            exit={{ opacity: 0, x: -50, rotateY: 15 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="absolute inset-0"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0, zIndex: 20 }}
+            exit={{ opacity: 0, x: -50 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="relative bg-white border-2 border-gray-200 rounded-2xl p-6 shadow-lg"
+            style={{ height: "180px" }}
           >
-            <div className="bg-white border border-[#181818] p-4 shadow-lg">
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-                <h3 className="text-xl font-light text-[#181818] mb-1">{currentStepData?.title}</h3>
-                <p className="text-[#181818]/70 font-light mb-3">{currentStepData?.subtitle}</p>
-              </motion.div>
+            <div className="mb-4">
+              <div className="flex items-center mb-3">
+                <div className="w-1 h-6 bg-black rounded-full mr-3"></div>
+                <h3 className="text-lg font-medium text-gray-400">{currentStepData?.title}</h3>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="mb-3"
-              >
-                {currentStepData?.type === "select" ? (
-                  <select
-                    value={currentValue}
-                    onChange={(e) => handleInputChange(e.target.value)}
-                    className="w-full p-3 border border-[#181818] bg-white text-[#181818] font-light focus:outline-none focus:border-[#10AE4C] transition-colors"
-                  >
-                    <option value="">Pick your poison</option>
-                    {currentStepData.options?.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                ) : currentStepData?.type === "textarea" ? (
-                  <textarea
-                    value={currentValue}
-                    onChange={(e) => handleInputChange(e.target.value)}
-                    placeholder={currentStepData.placeholder}
-                    rows={3}
-                    className="w-full p-3 border border-[#181818] bg-white text-[#181818] font-light focus:outline-none focus:border-[#10AE4C] transition-colors resize-none"
-                  />
-                ) : (
-                  <input
-                    type={currentStepData?.type || "text"}
-                    value={currentValue}
-                    onChange={(e) => handleInputChange(e.target.value)}
-                    placeholder={currentStepData?.placeholder}
-                    className="w-full p-3 border border-[#181818] bg-white text-[#181818] font-light focus:outline-none focus:border-[#10AE4C] transition-colors"
-                  />
-                )}
-              </motion.div>
+              {currentStepData?.type === "select" ? (
+                <select
+                  value={currentValue}
+                  onChange={(e) => handleInputChange(e.target.value)}
+                  className="w-full text-lg text-gray-700 bg-transparent border-none outline-none"
+                >
+                  <option value="">Choose your superpower...</option>
+                  {currentStepData.options?.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              ) : currentStepData?.type === "textarea" ? (
+                <textarea
+                  value={currentValue}
+                  onChange={(e) => handleInputChange(e.target.value)}
+                  rows={3}
+                  className="w-full text-lg text-gray-700 bg-transparent border-none outline-none placeholder-gray-300 resize-none"
+                />
+              ) : (
+                <input
+                  type={currentStepData?.type || "text"}
+                  value={currentValue}
+                  onChange={(e) => handleInputChange(e.target.value)}
+                  placeholder={currentStepData?.placeholder}
+                  className="w-full text-lg text-gray-700 bg-transparent border-none outline-none placeholder-gray-300"
+                />
+              )}
+            </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="flex justify-between"
-              >
+            <div className="absolute bottom-6 left-6 right-6 flex justify-between items-center">
+              {currentStep > 1 ? (
                 <button
                   onClick={handlePrevious}
-                  disabled={currentStep === 1}
-                  className={`px-4 py-2 border border-[#181818] font-light transition-colors ${
-                    currentStep === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-[#181818] hover:text-white"
-                  }`}
+                  className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors"
                 >
-                  Previous
+                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
                 </button>
-                <button
-                  onClick={handleNext}
-                  disabled={!canProceed}
-                  className={`px-4 py-2 border font-light transition-colors ${
-                    canProceed
-                      ? "border-[#10AE4C] bg-[#10AE4C] text-white hover:bg-[#0e9642]"
-                      : "border-[#181818] opacity-50 cursor-not-allowed"
-                  }`}
-                >
-                  {currentStep === steps.length ? "Complete" : "Next"}
-                </button>
-              </motion.div>
+              ) : (
+                <div></div>
+              )}
+
+              <button
+                onClick={handleNext}
+                disabled={!canProceed}
+                className={`px-8 py-3 rounded-full font-medium transition-colors ${
+                  canProceed ? "bg-black text-white hover:bg-gray-800" : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                }`}
+              >
+                {currentStep === steps.length ? (
+                  <span className="flex items-center">
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    Done
+                  </span>
+                ) : (
+                  <span className="flex items-center">
+                    Next
+                    <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                )}
+              </button>
             </div>
           </motion.div>
         </AnimatePresence>
-
-        {/* Background Cards */}
-        <div className="absolute inset-0 -z-10">
-          {[1, 2, 3].map((index) => (
-            <motion.div
-              key={index}
-              className="absolute inset-0 bg-white border border-[#181818]/20"
-              style={{
-                transform: `translateY(${index * 4}px) translateX(${index * 2}px) scale(${1 - index * 0.02})`,
-                opacity: 0.6 - index * 0.2,
-              }}
-              animate={{
-                transform: `translateY(${index * 4}px) translateX(${index * 2}px) scale(${1 - index * 0.02})`,
-              }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-            />
-          ))}
-        </div>
       </div>
     </div>
   )
