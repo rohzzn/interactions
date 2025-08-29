@@ -50,8 +50,7 @@ const steps: Step[] = [
     title: "Spill the tea about your project",
     subtitle: "What amazing thing are you building? (Or planning to build... someday)",
     type: "textarea",
-    placeholder:
-      "Tell us about your world-changing idea, side hustle, or that app you've been 'almost done' with for 6 months...",
+    placeholder: "Your world-changing idea or that app you've been 'almost done' with...",
     required: false,
   },
 ]
@@ -160,7 +159,7 @@ export function ProgressiveInputStack() {
   return (
     <div className="w-full max-w-md mx-auto">
       {/* Progress Bar */}
-      <div className="mb-8">
+      <div className="mb-4">
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm font-light text-[#181818]/70">
             Step {currentStep} of {steps.length}
@@ -180,7 +179,7 @@ export function ProgressiveInputStack() {
       </div>
 
       {/* Step Stack */}
-      <div className="relative min-h-[400px]">
+      <div className="relative min-h-[180px]">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentStep}
@@ -190,23 +189,23 @@ export function ProgressiveInputStack() {
             transition={{ duration: 0.4, ease: "easeOut" }}
             className="absolute inset-0"
           >
-            <div className="bg-white border border-[#181818] p-8 shadow-lg">
+            <div className="bg-white border border-[#181818] p-4 shadow-lg">
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-                <h3 className="text-2xl font-light text-[#181818] mb-2">{currentStepData?.title}</h3>
-                <p className="text-[#181818]/70 font-light mb-8">{currentStepData?.subtitle}</p>
+                <h3 className="text-xl font-light text-[#181818] mb-1">{currentStepData?.title}</h3>
+                <p className="text-[#181818]/70 font-light mb-3">{currentStepData?.subtitle}</p>
               </motion.div>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="mb-8"
+                className="mb-3"
               >
                 {currentStepData?.type === "select" ? (
                   <select
                     value={currentValue}
                     onChange={(e) => handleInputChange(e.target.value)}
-                    className="w-full p-4 border border-[#181818] bg-white text-[#181818] font-light focus:outline-none focus:border-[#10AE4C] transition-colors"
+                    className="w-full p-3 border border-[#181818] bg-white text-[#181818] font-light focus:outline-none focus:border-[#10AE4C] transition-colors"
                   >
                     <option value="">Pick your poison</option>
                     {currentStepData.options?.map((option) => (
@@ -220,8 +219,8 @@ export function ProgressiveInputStack() {
                     value={currentValue}
                     onChange={(e) => handleInputChange(e.target.value)}
                     placeholder={currentStepData.placeholder}
-                    rows={4}
-                    className="w-full p-4 border border-[#181818] bg-white text-[#181818] font-light focus:outline-none focus:border-[#10AE4C] transition-colors resize-none"
+                    rows={3}
+                    className="w-full p-3 border border-[#181818] bg-white text-[#181818] font-light focus:outline-none focus:border-[#10AE4C] transition-colors resize-none"
                   />
                 ) : (
                   <input
@@ -229,7 +228,7 @@ export function ProgressiveInputStack() {
                     value={currentValue}
                     onChange={(e) => handleInputChange(e.target.value)}
                     placeholder={currentStepData?.placeholder}
-                    className="w-full p-4 border border-[#181818] bg-white text-[#181818] font-light focus:outline-none focus:border-[#10AE4C] transition-colors"
+                    className="w-full p-3 border border-[#181818] bg-white text-[#181818] font-light focus:outline-none focus:border-[#10AE4C] transition-colors"
                   />
                 )}
               </motion.div>
@@ -243,7 +242,7 @@ export function ProgressiveInputStack() {
                 <button
                   onClick={handlePrevious}
                   disabled={currentStep === 1}
-                  className={`px-6 py-3 border border-[#181818] font-light transition-colors ${
+                  className={`px-4 py-2 border border-[#181818] font-light transition-colors ${
                     currentStep === 1 ? "opacity-50 cursor-not-allowed" : "hover:bg-[#181818] hover:text-white"
                   }`}
                 >
@@ -252,7 +251,7 @@ export function ProgressiveInputStack() {
                 <button
                   onClick={handleNext}
                   disabled={!canProceed}
-                  className={`px-6 py-3 border font-light transition-colors ${
+                  className={`px-4 py-2 border font-light transition-colors ${
                     canProceed
                       ? "border-[#10AE4C] bg-[#10AE4C] text-white hover:bg-[#0e9642]"
                       : "border-[#181818] opacity-50 cursor-not-allowed"
