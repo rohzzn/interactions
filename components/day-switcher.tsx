@@ -15,7 +15,7 @@ export function DaySwitcher({ currentDay, onDayChange }: DaySwitcherProps) {
     { number: 2, unlocked: true },
     { number: 3, unlocked: true }, // unlocked Day 3 for Card to Page transition
     { number: 4, unlocked: true }, // unlocked Day 4 for Interactive Folder
-    { number: 5, unlocked: false },
+    { number: 5, unlocked: true }, // unlocked Day 5 for Progressive Input Stack
     { number: 6, unlocked: false },
     { number: 7, unlocked: false },
   ]
