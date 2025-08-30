@@ -6,7 +6,8 @@ import { DaySwitcher } from "@/components/day-switcher"
 import { OTPInput } from "@/components/otp-input"
 import { CardToPageTransition } from "@/components/card-to-page-transition"
 import { InteractiveFolder } from "@/components/interactive-folder"
-import { ProgressiveInputStack } from "@/components/progressive-input-stack" // imported ProgressiveInputStack component
+import { ProgressiveInputStack } from "@/components/progressive-input-stack"
+import { WarpOverlay } from "@/components/warp-overlay" // imported WarpOverlay component
 
 export default function Home() {
   const [currentDay, setCurrentDay] = useState(1)
@@ -33,10 +34,15 @@ export default function Home() {
           title: "Interactive Folder",
           component: <InteractiveFolder />,
         }
-      case 5: // added Day 5 case for Progressive Input Stack
+      case 5:
         return {
           title: "Progressive Input Stack",
           component: <ProgressiveInputStack />,
+        }
+      case 6: // added Day 6 case for Warp Overlay
+        return {
+          title: "Warp Overlay",
+          component: <WarpOverlay />,
         }
       default:
         return {
@@ -69,7 +75,12 @@ export default function Home() {
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center py-16">
         <div className="container mx-auto px-4">
-          {(currentDay === 1 || currentDay === 2 || currentDay === 3 || currentDay === 4 || currentDay === 5) && (
+          {(currentDay === 1 ||
+            currentDay === 2 ||
+            currentDay === 3 ||
+            currentDay === 4 ||
+            currentDay === 5 ||
+            currentDay === 6) && ( // added currentDay === 6 condition
             <div className="flex flex-col items-center justify-center space-y-12">
               <div className="relative w-full h-16 flex items-center justify-center">
                 <h2 className="absolute text-3xl md:text-4xl text-[#181818] tracking-wide font-light whitespace-nowrap">
@@ -80,7 +91,7 @@ export default function Home() {
             </div>
           )}
 
-          {currentDay > 5 && (
+          {currentDay > 6 && ( // updated condition from > 5 to > 6
             <div className="text-center mb-12">
               <div className="inline-block border border-[#181818] px-4 py-2 mb-6">
                 <span className="text-sm font-light text-[#181818] tracking-wider">
