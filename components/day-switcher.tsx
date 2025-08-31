@@ -17,7 +17,7 @@ export function DaySwitcher({ currentDay, onDayChange }: DaySwitcherProps) {
     { number: 4, unlocked: true }, // unlocked Day 4 for Interactive Folder
     { number: 5, unlocked: true }, // unlocked Day 5 for Progressive Input Stack
     { number: 6, unlocked: true }, // unlocked Day 6 for Warp Overlay
-    { number: 7, unlocked: false },
+    { number: 7, unlocked: true }, // unlocked Day 7 for Peerlist Autofill
   ]
 
   const playDaySwitchSound = () => {

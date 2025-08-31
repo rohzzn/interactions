@@ -8,6 +8,7 @@ import { CardToPageTransition } from "@/components/card-to-page-transition"
 import { InteractiveFolder } from "@/components/interactive-folder"
 import { ProgressiveInputStack } from "@/components/progressive-input-stack"
 import { WarpOverlay } from "@/components/warp-overlay" // imported WarpOverlay component
+import { PeerlistAutofill } from "@/components/peerlist-autofill" // imported PeerlistAutofill component
 
 export default function Home() {
   const [currentDay, setCurrentDay] = useState(1)
@@ -43,6 +44,11 @@ export default function Home() {
         return {
           title: "Warp Overlay",
           component: <WarpOverlay />,
+        }
+      case 7: // added Day 7 case for Peerlist Autofill
+        return {
+          title: "Peerlist Autofill w/ AI",
+          component: <PeerlistAutofill />,
         }
       default:
         return {
@@ -80,7 +86,8 @@ export default function Home() {
             currentDay === 3 ||
             currentDay === 4 ||
             currentDay === 5 ||
-            currentDay === 6) && ( // added currentDay === 6 condition
+            currentDay === 6 ||
+            currentDay === 7) && ( // added currentDay === 7 condition
             <div className="flex flex-col items-center justify-center space-y-12">
               <div className="relative w-full h-16 flex items-center justify-center">
                 <h2 className="absolute text-3xl md:text-4xl text-[#181818] tracking-wide font-light whitespace-nowrap">
@@ -91,7 +98,7 @@ export default function Home() {
             </div>
           )}
 
-          {currentDay > 6 && ( // updated condition from > 5 to > 6
+          {currentDay > 7 && ( // updated condition from > 6 to > 7
             <div className="text-center mb-12">
               <div className="inline-block border border-[#181818] px-4 py-2 mb-6">
                 <span className="text-sm font-light text-[#181818] tracking-wider">
